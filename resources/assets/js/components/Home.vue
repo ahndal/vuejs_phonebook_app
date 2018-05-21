@@ -1,27 +1,66 @@
 <template>
-<nav class="panel column is-offset-2 is-8">
-  <p class="panel-heading">
-    Vuejs Phonebook
+    <div>
+        <nav class="panel column is-offset-2 is-8">
+          <p class="panel-heading">
+            Vuejs Phonebook
 
-    <button class="button is-link is-outlined">
-      Add New
-    </button>
-  </p>
-  <div class="panel-block">
-    <p class="control has-icons-left">
-      <input class="input is-small" type="text" placeholder="search">
-      <span class="icon is-small is-left">
-        <i class="fas fa-search" aria-hidden="true"></i>
-      </span>
-    </p>
-  </div>
-  <a class="panel-block">
-    <span class="column is-6">
-      marksheet
-    </span>
-    <span class="has-text-danger column is-2">삭제</span>
-    <span class="has-text-info column is-2">수정</span>
-    <span class="has-text-primary column is-2">보기</span>
-  </a>
-</nav>
+            <button class="button is-link is-outlined" @click="openAdd">
+              Add New
+            </button>
+          </p>
+
+          <div class="panel-block">
+            <p class="control has-icons-left">
+              <input class="input is-small" type="text" placeholder="search">
+              <span class="icon is-small is-left">
+                <i class="fas fa-search" aria-hidden="true"></i>
+              </span>
+            </p>
+          </div>
+
+          <a class="panel-block" v-for="item, key in lists">
+            <span class="column is-6">
+              {{ item.name }}
+            </span>
+            <span class="has-text-danger column is-2">삭제</span>
+            <span class="has-text-info column is-2">수정</span>
+            <span class="has-text-primary column is-2" @click="openShow">보기</span>
+          </a>
+        </nav>
+
+        <Add :openmodal='addActive' @closeRequest='close'></Add>
+    </div>
 </template>
+
+
+<script>
+let Add = require('./Add.vue');
+
+export default{
+    components: {Add},
+    data() {
+        return {
+            addActive: '',
+            showActive: '',
+            lists: {},
+            errors: {}
+        }
+    },
+    mounted() {
+        axios.post('/getData')
+             .then((response) => this.lists = response.data)
+             .catch((error) => this.errors = error.response.data.errors)
+    },
+    methods: {
+        openAdd() {
+            this.addActive = 'is-active';
+        },
+        openShow() {
+            this.addActive = 'is-active';
+        },
+        close() {
+            this.addActive = '';
+        }
+    }
+}
+</script>
